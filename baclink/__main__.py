@@ -12,47 +12,65 @@ logging.basicConfig(
 def main():
     logging.info("Starting baclink...")
 
-    import time
     import BAC0
+    import time
 
     from BAC0.core.devices.local.models import (
         analog_input,
+        binary_output,
+        multistate_value,
         character_string,
+        make_state_text,
     )
 
-    bacnet = BAC0.lite(
-        ip="192.168.10.16/24",
-        deviceId=199984,
-        localObjName="MyDevice",
-    )
+    # Start BAC0 - synchronous in this version, no async
+    bacnet = BAC0.lite(ip="192.168.82.247/24", deviceId=199984, localObjName="Ecovie")
 
-    # Define objects,
+    # Override the default BAC0 branding
+    bacnet.this_application.localDevice.description = "My PLC Gateway"
+    bacnet.this_application.localDevice.modelName = "PDM3 BACnet Gateway"
+    bacnet.this_application.localDevice.vendorName = "YourCompanyName"
+
+    # Declare objects
     analog_input(
         name="TW1",
         description="Water temperature 1",
         properties={"units": "degreesCelsius"},
         presentValue=0.0,
     )
-
-    character_string(
+    binary_output(
+        name="Night",
+        description="Day/Night flag",
+        properties={"inactiveText": "day", "activeText": "night"},
+    )
+    lang_states = make_state_text(["en", "fr"])
+    multistate_value(
+        name="Language",
+        description="Language for requests",
+        presentValue=1,
+        properties={"stateText": lang_states},
+    )
+    status = character_string(
         name="Application_Status",
-        description="Health",
+        description="Health/status",
         presentValue="Normal",
     )
 
-    # Register all defined objects with the BACnet application,
-    analog_input.add_objects_to_application(bacnet)
+    # Register all objects into the running application
+    status.add_objects_to_application(bacnet)
 
-    def get_plc_value():
-        # TODO: replace with your PLC read
-        return 22.3
+    print("BACnet device running.")
 
+    # Main loop
     while True:
         try:
-            bacnet["TW1"].presentValue = float(get_plc_value())
+            # Replace these with your actual PLC variable reads
+            bacnet["TW1"].presentValue = 21.5
+            bacnet["Night"].presentValue = False
             bacnet["Application_Status"].presentValue = "Normal"
         except Exception as e:
-            bacnet["Application_Status"].presentValue = str(e)[:50]
+            bacnet["Application_Status"].presentValue = f"Error: {str(e)[:50]}"
+
         time.sleep(5)
 
 
