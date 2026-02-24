@@ -1,0 +1,40 @@
+2026-02-24 11:11:24,693 - INFO - Starting baclink...
+2026-02-24 11:13:02,058 - INFO - Starting baclink...
+2026-02-24 11:13:59,856 - INFO - Starting baclink...
+2026-02-24 11:14:10,132 - INFO - Starting baclink...
+2026-02-24 11:19:57,507 - INFO - Starting baclink...
+2026-02-24 11:19:57,552 - INFO - Starting BAC0 version 21.12.03 (Lite)
+2026-02-24 11:19:57,552 - INFO - Use BAC0.log_level to adjust verbosity of the app.
+2026-02-24 11:19:57,552 - INFO - Ex. BAC0.log_level('silence') or BAC0.log_level('error')
+2026-02-24 11:19:57,552 - DEBUG - Configurating app
+2026-02-24 11:19:57,552 - INFO - Starting TaskManager
+2026-02-24 11:19:57,552 - DEBUG - Task Manager waiting for tasks...
+2026-02-24 11:19:57,552 - DEBUG - Task Manager Initiated
+2026-02-24 11:19:57,552 - INFO - Using ip : 192.168.200.68
+2026-02-24 11:19:57,553 - DEBUG - Configurating app
+2026-02-24 11:19:57,557 - DEBUG - To be able to run the web server, you must install pandas, bokeh, flask and flask_bootstrap
+2026-02-24 11:19:57,557 - DEBUG - Those are not all installed so BAC0 will work in Lite mode only.
+2026-02-24 11:22:08,513 - INFO - Starting baclink...
+2026-02-24 11:22:08,560 - INFO - Starting BAC0 version 21.12.03 (Lite)
+2026-02-24 11:22:08,560 - INFO - Use BAC0.log_level to adjust verbosity of the app.
+2026-02-24 11:22:08,560 - INFO - Ex. BAC0.log_level('silence') or BAC0.log_level('error')
+2026-02-24 11:22:08,560 - DEBUG - Configurating app
+2026-02-24 11:22:08,560 - INFO - Starting TaskManager
+2026-02-24 11:22:08,560 - DEBUG - Task Manager waiting for tasks...
+2026-02-24 11:22:08,561 - DEBUG - Task Manager Initiated
+2026-02-24 11:22:08,561 - INFO - Using ip : 192.168.82.43
+2026-02-24 11:22:08,561 - DEBUG - Configurating app
+2026-02-24 11:22:08,565 - DEBUG - To be able to run the web server, you must install pandas, bokeh, flask and flask_bootstrap
+2026-02-24 11:22:08,565 - DEBUG - Those are not all installed so BAC0 will work in Lite mode only.
+2026-02-24 11:23:50,221 - INFO - Starting baclink...
+2026-02-24 11:23:50,268 - INFO - Starting BAC0 version 21.12.03 (Lite)
+2026-02-24 11:23:50,268 - INFO - Use BAC0.log_level to adjust verbosity of the app.
+2026-02-24 11:23:50,268 - INFO - Ex. BAC0.log_level('silence') or BAC0.log_level('error')
+2026-02-24 11:23:50,268 - DEBUG - Configurating app
+2026-02-24 11:23:50,268 - INFO - Starting TaskManager
+2026-02-24 11:23:50,268 - DEBUG - Task Manager waiting for tasks...
+2026-02-24 11:23:50,268 - DEBUG - Task Manager Initiated
+2026-02-24 11:23:50,268 - INFO - Using ip : 192.168.10.16
+2026-02-24 11:23:50,269 - DEBUG - Configurating app
+2026-02-24 11:23:50,272 - DEBUG - To be able to run the web server, you must install pandas, bokeh, flask and flask_bootstrap
+2026-02-24 11:23:50,273 - DEBUG - Those are not all installed so BAC0 will work in Lite mode only.
