@@ -1,1 +1,0 @@
-nohup /opt/baclink/venv/bin/python3 -m baclink > /opt/baclink/logs/baclink.log 2>&1 &
