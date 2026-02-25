@@ -13,8 +13,6 @@ logging.basicConfig(
         logging.FileHandler("baclink.log") # file
     ]
 )
-import BAC0
-BAC0.log_level('warning')
 
 for name in ["opcua"]:
     logging.getLogger(name).setLevel(logging.WARNING)
@@ -23,9 +21,9 @@ def main():
     logging.info("Starting baclink...")
 
     publisher = BACnetPublisher(
-        ip="192.168.82.247/24",
-        device_id=199984,
-        device_name="Ecovie"
+        config.BACNET_ADDRESS,
+        device_id=config.BACNET_DEVICE_ID,
+        device_name=config.BACNET_DEVICE_NAME
     )
 
     opcuaLink = OPCUAManager(config.OPCUA_SERVER_URL, publisher=publisher)

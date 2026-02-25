@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "baclink"                       # package name (PyPI-safe)
-version = "0.1.0"                         # initial version
+version = "0.1.2"                         # initial version
 description = "Broadcasts all variables from OPC UA server to BACnet"
 readme = "README.md"                       # optional, will be used for PyPI
 requires-python = ">=3.7"                  # minimum Python version
@@ -19,6 +19,7 @@ classifiers = [
     "Operating System :: OS Independent"
 ]
 dependencies = [
+    "lxml==5.4.0",
     "BAC0==21.12.03",
     "pytz",
     "python-dotenv",
@@ -37,9 +38,10 @@ docs = [
 ]
 
 [tool.setuptools]
-package-data = {
-    "baclink": ["../config/.env.example", "../scripts/run.sh"]
-}
+include-package-data = true
+
+[tool.setuptools.package-data]
+    "baclink" = ["config/.env.example", "scripts/run.sh"] 
 
 [tool.setuptools.packages.find]
 exclude = ["tests*"]  # ignore test directories
