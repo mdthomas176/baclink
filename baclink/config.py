@@ -1,13 +1,24 @@
 import os
-from dotenv import load_dotenv, find_dotenv
-import logging
+from dotenv import load_dotenv
+from pathlib import Path
 
-logger = logging.getLogger(__name__)
+# check for explicit environment variable
+env_path = os.getenv("BACLINK_ENV_PATH") 
+
+#
+if not env_path and Path("/opt/baclink.config/.env").exists():
+    env_path = "/opt/baclink/config/.env"
+
+env_file = Path(env_path)
+
+#still no .env path...
+if not env_file.exists():
+    raise FileNotFoundError(f"Required .env file not found at {env_file}")
 
 try:
-    load_dotenv(find_dotenv())
+    load_dotenv(env_file)
 except Exception as e:
-    logger.exception(f"Error loading .env file {e}")
+    print(f"config.py: Error loading .env file {e}")
 
 OPCUA_SERVER_URL = os.getenv("OPCUA_SERVER_URL")
 LOG_LEVEL = os.getenv("LOG_LEVEL")

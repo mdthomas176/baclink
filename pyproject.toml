@@ -12,7 +12,7 @@ license = {text = "MIT"}                   # license type
 authors = [
     {name = "Mike Thomas", email = "mdthomas@tptsys.com"}
 ]
-keywords = ["example", "python", "package"]
+keywords = ["BACnet", "OPC UA", "IoT", "python", "package"]
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
@@ -35,6 +35,11 @@ docs = [
     "sphinx>=7.4",
     "myst-parser>=0.21"
 ]
+
+[tool.setuptools]
+package-data = {
+    "baclink": ["../config/.env.example", "../scripts/run.sh"]
+}
 
 [tool.setuptools.packages.find]
 exclude = ["tests*"]  # ignore test directories
