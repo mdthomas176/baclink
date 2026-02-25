@@ -2,6 +2,7 @@
 import logging
 log = logging.getLogger(__name__)
 
+import threading
 import time
 import sys
 from datetime import datetime, timezone, timedelta
@@ -29,7 +30,12 @@ class OPCUAManager:
         self.client = None
         self.client = Client(self.url)
         self.publisher = publisher
-    
+        self.stop_event = threading.Event()
+
+    def stop(self):
+        log.info("Stopping poll loop...")
+        self.stop_event.set()
+
     def connect(self):
         try:
             self.client.connect()
@@ -164,69 +170,76 @@ class OPCUAManager:
         """Poll Loop for OPC UA variables."""
         next_run_time = time.monotonic() #initialize run time
         init = True
-        while True:
-            next_run_time += config.UPDATE_INTERVAL_SECONDS #update next run time
-            try:
-                if not self.connected():
-                    log.warning("OPC UA connection lost.")
-                    log.info("attempting OPC UA server reconnect.")
-                    try:
-                        self.connect()
-                        self.load_vars()
-                    except Exception as e:
-                        log.error(f"Error reconnecting to OPC UA server: {e}")
-                        raise RuntimeError("OPC UA Server not available")
-                
-                log.debug("Begin polling OPC UA variables")
-                for var in self.variables:
-                    #determine whether the variable should be polled:
+        try:
+            while not self.stop_event.is_set():
+                next_run_time += config.UPDATE_INTERVAL_SECONDS #update next run time
+                try:
+                    if not self.connected():
+                        log.warning("OPC UA connection lost.")
+                        log.info("attempting OPC UA server reconnect.")
+                        try:
+                            self.connect()
+                            self.load_vars()
+                        except Exception as e:
+                            log.error(f"Error reconnecting to OPC UA server: {e}")
+                            raise RuntimeError("OPC UA Server not available")
+                    
+                    log.debug("Begin polling OPC UA variables")
+                    for var in self.variables:
+                        #determine whether the variable should be polled:
 
-                    if var.update_method == oct.UpdateMethod.POLL:
-                        get_value = True
-                    elif var.update_method == oct.UpdateMethod.SUBSCRIBE:
-                        if var.last_recorded_time is not None and \
-                            var.last_recorded_time < datetime.now(timezone.utc) - timedelta(minutes=config.MAX_UPDATE_INTERVAL_MINUTES):
+                        if var.update_method == oct.UpdateMethod.POLL:
                             get_value = True
+                        elif var.update_method == oct.UpdateMethod.SUBSCRIBE:
+                            if var.last_recorded_time is not None and \
+                                var.last_recorded_time < datetime.now(timezone.utc) - timedelta(minutes=config.MAX_UPDATE_INTERVAL_MINUTES):
+                                get_value = True
+                            else:
+                                get_value = False
                         else:
                             get_value = False
-                    else:
-                        get_value = False
 
-                    if get_value:
-                        try:
-                            log.debug(f"polling variable {var.path}")
-                            value = var.node.get_value()
-                            log.debug(f"got value {value} for variable {var.path}")
-                            timestamp = var.node.get_data_value().SourceTimestamp.strftime("%Y-%m-%dT%H:%M:%SZ")
-                            log.debug(f"got timestamp {timestamp} for variable {var.path}")
-                        except Exception as e:
-                            value = f"Error: {e}"
-                            timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-                            log.debug(f"Error getting value. using utc time: timestamp {timestamp} for variable {var.path}")
-                        
-                        var.record_value(value, timestamp)
-                log.info(f"Finished polling variables. publishing data.")
-                if self.publisher is not None:
-                #publish the data
-                    if init:
-                        self.publisher.publish_data(self.variables, init=True)
-                        init = False
+                        if get_value:
+                            try:
+                                log.debug(f"polling variable {var.path}")
+                                value = var.node.get_value()
+                                log.debug(f"got value {value} for variable {var.path}")
+                                timestamp = var.node.get_data_value().SourceTimestamp.strftime("%Y-%m-%dT%H:%M:%SZ")
+                                log.debug(f"got timestamp {timestamp} for variable {var.path}")
+                            except Exception as e:
+                                value = f"Error: {e}"
+                                timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+                                log.debug(f"Error getting value. using utc time: timestamp {timestamp} for variable {var.path}")
+                            
+                            var.record_value(value, timestamp)
+                    log.info(f"Finished polling variables. publishing data.")
+                    if self.publisher is not None:
+                    #publish the data
+                        if init:
+                            self.publisher.publish_data(self.variables, init=True)
+                            init = False
+                        else:
+                            self.publisher.publish_data(self.variables, init=False)
                     else:
-                        self.publisher.publish_data(self.variables, init=False)
-                else:
-                    log.warning("No publisher available. Skipping publishing.")
+                        log.warning("No publisher available. Skipping publishing.")
+                except Exception:
+                    log.exception(f"Unhandled exception in poll_loop")
+                    self.stop_event.set()
+                    break
                                 
-            except Exception as e:
-                log.exception(f"Unhandled exception in poll_loop")
-                sys.exit(1)
-            finally:
-                log.debug(f"poll_loop exiting...")
-                        
-       # sleep for the remaining time until the next run time  
-            sleep_duration = next_run_time - time.monotonic()
-            if sleep_duration > 0:
-                log.info(f"Sleeping for {sleep_duration} seconds before next run time.")
-                time.sleep(sleep_duration)
-            else:
-                log.warning(f"Loop overran the target interval by {abs(sleep_duration)} seconds. Resetting run_time")
-                next_run_time = time.monotonic() # reset to current time to avoid drift:
+        # sleep for the remaining time until the next run time  
+                sleep_duration = next_run_time - time.monotonic()
+                if sleep_duration > 0:
+                    log.info(f"Sleeping for {sleep_duration} seconds before next run time.")
+                    self.stop_event.wait(timeout=sleep_duration)
+                else:
+                    log.warning(f"Loop overran the target interval by {abs(sleep_duration)} seconds. Resetting run_time")
+                    next_run_time = time.monotonic() # reset to current time to avoid drift
+        
+        finally:
+            log.debug(f"poll_loop exiting...")
+            try:
+                self.client.disconnect()
+            except Exception:
+                pass
+            return

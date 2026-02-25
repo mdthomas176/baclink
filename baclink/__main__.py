@@ -6,13 +6,18 @@ from baclink.bacnet_publisher import BACnetPublisher
 import time
 
 logging.basicConfig(
-    level=logging.DEBUG,  # minimum level to capture
-    format="%(asctime)s - %(levelname)s - %(message)s",
+    level=logging.INFO,  # minimum level to capture
+    format="%(asctime)s [%(levelname)s] [%(name)s] %(message)s",
     handlers=[
         logging.StreamHandler(),              # console
         logging.FileHandler("baclink.log") # file
     ]
 )
+import BAC0
+BAC0.log_level('warning')
+
+for name in ["opcua"]:
+    logging.getLogger(name).setLevel(logging.WARNING)
 
 def main():
     logging.info("Starting baclink...")
@@ -38,7 +43,9 @@ def main():
         while True:
             time.sleep(1)
     except KeyboardInterrupt:
-        logging.info("Shutting down.")
+        logging.info("Shut down requested.")
+        opcuaLink.stop()
+        #opcuaLink.join()
     
     opcuaLink.poll_loop()
 

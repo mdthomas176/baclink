@@ -2,6 +2,7 @@ import logging
 from .publisher import Publisher
 import BAC0
 log = logging.getLogger(__name__)
+BAC0.log_level("silence")
 
 class BACnetPublisher(Publisher):
 
