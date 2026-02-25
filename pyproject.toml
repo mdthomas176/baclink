@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]  # build tools required
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "baclink"                       # package name (PyPI-safe)
+version = "0.1.0"                         # initial version
+description = "Broadcasts all variables from OPC UA server to BACnet"
+readme = "README.md"                       # optional, will be used for PyPI
+requires-python = ">=3.7"                  # minimum Python version
+license = {text = "MIT"}                   # license type
+authors = [
+    {name = "Mike Thomas", email = "mdthomas@tptsys.com"}
+]
+keywords = ["example", "python", "package"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent"
+]
+dependencies = [
+    "BAC0==21.12.03",
+    "pytz",
+    "python-dotenv",
+    "opcua"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.3",
+    "black>=24.3",
+    "flake8>=7.0"
+]
+docs = [
+    "sphinx>=7.4",
+    "myst-parser>=0.21"
+]
+
+[tool.setuptools.packages.find]
+exclude = ["tests*"]  # ignore test directories
