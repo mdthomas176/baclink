@@ -53,7 +53,7 @@ def main():
 
 if __name__ == "__main__":
     logging.basicConfig(
-        level=logging.DEBUG,  # minimum level to capture
+        level=logging.INFO,  # minimum level to capture
         format="%(asctime)s - %(levelname)s - %(message)s",
         handlers=[
             logging.StreamHandler(),              # console

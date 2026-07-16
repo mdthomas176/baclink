@@ -212,7 +212,7 @@ class OPCUAManager:
                                 log.debug(f"Error getting value. using utc time: timestamp {timestamp} for variable {var.path}")
                             
                             var.record_value(value, timestamp)
-                    log.info(f"Finished polling variables. publishing data.")
+                    log.debug(f"Finished polling variables. publishing data.")
                     if self.publisher is not None:
                     #publish the data
                         if init:
@@ -230,7 +230,7 @@ class OPCUAManager:
         # sleep for the remaining time until the next run time  
                 sleep_duration = next_run_time - time.monotonic()
                 if sleep_duration > 0:
-                    log.info(f"Sleeping for {sleep_duration} seconds before next run time.")
+                    log.debug(f"Sleeping for {sleep_duration} seconds before next run time.")
                     self.stop_event.wait(timeout=sleep_duration)
                 else:
                     log.warning(f"Loop overran the target interval by {abs(sleep_duration)} seconds. Resetting run_time")
