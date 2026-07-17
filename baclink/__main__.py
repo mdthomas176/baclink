@@ -5,6 +5,10 @@ from baclink import config
 from baclink.bacnet_publisher import BACnetPublisher
 import time
 
+class SuppressBAC0Filter(logging.Filter):
+    def filter(self, record):
+        return not record.name.startswith("BAC0_Root")
+
 logging.basicConfig(
     level=logging.INFO,  # minimum level to capture
     format="%(asctime)s [%(levelname)s] [%(name)s] %(message)s",
@@ -37,6 +41,11 @@ def main():
 
     logging.info("OPC UA polling started in background thread.")
 
+
+    logging.info("suppressing BAC0 logging")
+    for handler in logging.getLogger().handlers:
+        handler.addFilter(SuppressBAC0Filter())
+
     try:
         while True:
             time.sleep(1)
@@ -60,7 +69,6 @@ if __name__ == "__main__":
             logging.FileHandler("baclink.log") # file
         ]
     )
-
 
     
 

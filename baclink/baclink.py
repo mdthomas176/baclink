@@ -25,6 +25,8 @@ class baclinkPublisher:
         self.bacnet.this_application.localDevice.modelName = "PDM3 BACnet Gateway"
         self.bacnet.this_application.localDevice.vendorName = "YourCompanyName"
 
+        BAC0.log_level("silence")
+
         self.register_objects()
 
     
@@ -59,6 +61,8 @@ class baclinkPublisher:
         )
          # Register all objects into the running application
         status.add_objects_to_application(self.bacnet)
+        
+        BAC0.log_level("silence")
 
         print("BACnet device running.")
 
