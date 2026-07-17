@@ -160,6 +160,7 @@ class bacnetPublisher:
         self.address = ip_addr
         self.deviceId = deviceId
         self.localObjName=localObjName
+        BAC0.log_level("silence")
     
     def register_objects(self, variables):
         for var in variables:

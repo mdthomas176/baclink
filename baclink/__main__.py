@@ -1,6 +1,6 @@
 import logging
 from baclink.opcua_connect import OPCUAManager
-from baclink.opcua_publisher import bacnetPublisher
+#from baclink.opcua_publisher import bacnetPublisher
 from baclink import config
 from baclink.bacnet_publisher import BACnetPublisher
 import time

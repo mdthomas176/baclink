@@ -2,12 +2,11 @@ import logging
 from .publisher import Publisher
 import BAC0
 log = logging.getLogger(__name__)
-BAC0.log_level("silence")
+
 
 class BACnetPublisher(Publisher):
 
     def __init__(self, ip, device_id, device_name):
-        import BAC0
 
         log.info("Starting bacnet stack")
 
@@ -16,6 +15,8 @@ class BACnetPublisher(Publisher):
             deviceId=device_id,
             localObjName=device_name,
         )
+
+        BAC0.log_level("silence")
 
         # Override the default BAC0 branding
         self.bacnet.this_application.localDevice.description = "My PLC Gateway"
